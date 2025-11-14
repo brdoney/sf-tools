@@ -10,8 +10,8 @@ set -euo pipefail
 #     ./build backend down     -> compose down
 #   ./build frontend           -> Build and run frontend (r to reload, q to quit)
 
-
 CONTAINERS=podman
+REPO_DIR="$HOME/Documents/StudentFirstSIS/src"
 
 # https://dev.to/ifenna__/adding-colors-to-bash-scripts-48g4
 # Cyan
@@ -19,6 +19,11 @@ CONTAINERS=podman
 # Blue
 COLOR="\e[34m"
 ENDCOLOR="\e[0m"
+
+# Get the directory where this script is located (for some running sibling commands later)
+# We use cd and pwd to work even if we're executing from this script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEBUG_COMPOSE="$SCRIPT_DIR/../docker-compose.vs.debug.g.yml"
 
 function printheader() {
 	local msg
@@ -44,7 +49,7 @@ function backend_up() {
 	if ! $CONTAINERS ps --format '{{.ID}}' | grep -q .; then
 		echo " No"
 		printheader "Starting containers"
-		$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f ~/.config/docker-compose.vs.debug.g.yml up --detach
+		$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f "$DEBUG_COMPOSE" up --detach
 	else
 		echo " Yes"
 	fi
@@ -53,9 +58,6 @@ function backend_up() {
 function backend_refresh() {
 	printheader "Starting deployment"
 
-	# Get the directory where this script is located
-	SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 	# Run another script in the same directory
 	"${SCRIPT_DIR}/backend-refresh"
 }
@@ -63,12 +65,12 @@ function backend_refresh() {
 function backend_down() {
 	printheader "Bringing down containers"
 	# Use 0 second timeout so we immediately go to SIGKILL (necessary for containers running dotnet)
-	$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f ~/.config/docker-compose.vs.debug.g.yml down -t 0
+	$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f "$DEBUG_COMPOSE" down -t 0
 }
 
 function backend_restart_containers() {
 	printheader "Restarting containers"
-	$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f ~/.config/docker-compose.vs.debug.g.yml restart
+	$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f "$DEBUG_COMPOSE" restart
 }
 
 function backend_restore() {
@@ -108,7 +110,6 @@ function backend_refreshable() {
 		esac
 	done
 }
-
 
 function backend() {
 	local subcommand="${1:-}"
@@ -194,7 +195,7 @@ function frontend_refreshable() {
 }
 
 # Move to the repo
-cd $HOME/Documents/StudentFirstSIS/src
+cd "$REPO_DIR"
 
 COMMAND="${1:-}"
 shift

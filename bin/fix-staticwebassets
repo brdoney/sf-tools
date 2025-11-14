@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+
+import json
+import platform
+from pathlib import Path
+
+GREEN = "\033[92m"
+ENDCOLOR = "\033[0m"
+
+REPO_PATH = Path("~/Documents/StudentFirstSIS").expanduser()
+roots = [
+    REPO_PATH / "src/Services/Sis",
+    REPO_PATH / "src/Environment/Tenants",
+    REPO_PATH / "src/Environment/StudentFirst.DbMigration.ConsoleApp",
+]
+roots = [Path(r).expanduser() for r in roots]
+
+SYSTEM = platform.system()
+HOME_DIR = Path().home()
+
+for root in roots:
+    for file in root.rglob("*staticwebassets.runtime.json"):
+        if file.is_file():
+            text = file.read_text()
+            data = json.loads(text)  # pyright: ignore[reportAny]
+
+            # Fix paths (regardless of platform) so that they go from
+            # C:\\Users\\BrendanDoney\\... -> /...
+            # /Users/brendandoney/... -> /...
+            # /home/brendandoney/... -> /...
+            new_paths: list[str] = []
+            changed = False
+            file_path: str
+            for file_path in data["ContentRoots"]:  # pyright: ignore[reportAny]
+                p = Path(file_path)
+                try:
+                    p = p.relative_to(HOME_DIR)
+                    transformed = f"/{p.as_posix()}"
+                    new_paths.append(transformed)
+                    changed = True
+                except ValueError:
+                    # It isn't relative, so just keep it (it's probably already been fixed in the past)
+                    new_paths.append(file_path)
+
+            data["ContentRoots"] = new_paths
+
+            if changed:
+                print(f"{GREEN}{file}{ENDCOLOR}")
+                # optional: backup
+                _ = file.with_suffix(file.suffix + ".bak").write_text(
+                    text, encoding="utf-8"
+                )
+                # write replaced content
+                with file.open("w") as f:
+                    json.dump(data, f)
+            else:
+                print(file)

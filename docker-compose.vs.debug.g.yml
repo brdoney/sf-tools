@@ -1,0 +1,559 @@
+services:
+  academicsservice:
+    image: globaledtechacademicsapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.Academics.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/Academics/GlobalEdTech.Sis.Academics.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.Academics.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+  admissionsservice:
+    image: globaledtechadmissionsapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.Admissions.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/Admissions/GlobalEdTech.Sis.Admissions.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.Admissions.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  careerservicesservice:
+    image: globaledtechcareerservicesapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.CareerServices.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/CareerServices/GlobalEdTech.Sis.CareerServices.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.CareerServices.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  communicationsservice:
+    image: globaledtechcommunicationsapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.Communications.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/Communications/GlobalEdTech.Sis.Communications.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.Communications.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  databasebmigrationsservice:
+    image: dbmigrationsconsoleapp:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "StudentFirst.DbMigration.ConsoleApp"
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Environment/StudentFirst.DbMigration.ConsoleApp:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/StudentFirst.DbMigration.ConsoleApp.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  documentmanagementservice:
+    image: globaledtechdocumentmanagementapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.DocumentManagement.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/DocumentManagement/GlobalEdTech.Sis.DocumentManagement.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.DocumentManagement.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  facilitiesservice:
+    image: globaledtechfacilitiesapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.Facilities.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/Facilities/GlobalEdTech.Sis.Facilities.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.Facilities.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  financialaidcalculatorsservice:
+    image: financialaidcalculatorsapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "StudentFirst.FinancialAidCalculators.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/FinancialAid/StudentFirst.FinancialAidCalculators.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/StudentFirst.FinancialAidCalculators.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  financialaidservice:
+    image: globaledtechfinancialaidsapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.FinancialAid.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/FinancialAid/GlobalEdTech.Sis.FinancialAid.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.FinancialAid.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  queryservice:
+    image: studentfirstqueryapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "StudentFirst.Query"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/StudentFirst.Query:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/StudentFirst.Query.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  reportsservice:
+    image: globaledtechreports:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.Reports"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/Reports/GlobalEdTech.Sis.Reports:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.Reports.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  studentaccountsservice:
+    image: globaledtechstudentaccountsapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.StudentAccounts.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/StudentAccounts/GlobalEdTech.Sis.StudentAccounts.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.StudentAccounts.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  studentportalservice:
+    image: globaledtechstudentportalapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.StudentPortal.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/StudentPortal/GlobalEdTech.Sis.StudentPortal.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.StudentPortal.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  systemconfigurationservice:
+    image: globaledtechsystemconfigapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.SystemConfiguration.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Services/Sis/SystemConfiguration/GlobalEdTech.Sis.SystemConfiguration.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.SystemConfiguration.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true
+
+  tenantsservice:
+    image: globaledtechtenantsapi:dev
+    build:
+      args:
+        LAUNCHING_FROM_VS: true
+        BUILD_CONFIGURATION: Debug
+      target: base
+      labels:
+        com.microsoft.created-by: "visual-studio"
+        com.microsoft.visual-studio.project-name: "GlobalEdTech.Sis.Tenants.API"
+    environment:
+      # - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION=true
+      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=false
+      - TERM=xterm
+    volumes:
+      - /home/brendandoney/Documents/StudentFirstSIS/src/Environment/Tenants/GlobalEdTech.Sis.Tenants.API:/app:rw
+      - /home/brendandoney/Documents/StudentFirstSIS/src:/src:rw
+      - /home/brendandoney/vsdbg:/remote_debugger:rw
+      - /home/brendandoney/.nuget/packages:/.nuget/packages:ro
+      # - C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages:/.nuget/fallbackpackages:ro
+      - /home/brendandoney/.aspnet/https:/root/.aspnet/https:ro
+      - /home/brendandoney/.aspnet/https:/home/app/.aspnet/https:ro
+      - /home/brendandoney/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - /home/brendandoney/.microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\linux-x64\net8.0:/VSTools:ro
+      # - C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\HotReload:/HotReloadAgent:ro
+
+    # entrypoint: "tail -f /dev/null"
+    entrypoint: ["/bin/sh", "-c", "rm -f /var/log/studentfirst.log && mkfifo /var/log/studentfirst.log && (while :; do cat /var/log/studentfirst.log; done) & tail -f /dev/null"]
+    # entrypoint: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --wait"
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      com.microsoft.visualstudio.debuggee.arguments: " --additionalProbingPath /.nuget/packages \"/app/bin/Debug/net8.0/GlobalEdTech.Sis.Tenants.API.dll\" > /var/log/studentfirst.log"
+      # com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      # com.microsoft.visualstudio.debuggee.killprogram: "dotnet --roll-forward Major /VSTools/DistrolessHelper/DistrolessHelper.dll --stop dotnet"
+    tty: true

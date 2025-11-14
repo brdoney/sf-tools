@@ -51,7 +51,11 @@ Microsoft doesn't publish an `mssql-server` binary for macOS, so you have to run
 
 Because its running in a container, the database's data will be deleted if you ever delete the container. So just make sure you don't do that and keep backups 😆. I never tried using bind mounts or volumes to get around this but definitely update this guide if you do this!
 
-<!-- TODO: Update with docker command -->
+For example, to pull+run SQL Server 2022 with Docker:
+
+```
+docker run -d --name sfmssql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=<password>' -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
+```
 
 #### Database Setup
 
@@ -179,7 +183,7 @@ If I ever need to see what's going on with a backend service I use VSCode's cont
 
 In case you're curious how I arrived at the current tooling, here's how it happened:
 
-### Linux
+### Step 1: Linux
 
 `docker-compose.vs.debug.g.yml` tweaks:
 
@@ -199,6 +203,9 @@ In case you're curious how I arrived at the current tooling, here's how it happe
     - `TERM=xterm`
 - Remove `DOTNET_USE_POLLING_FILE_WATCHER=1` to improve performance a bit, since we're not using hot-reloading in the container anymore
 
-### macOS
+### Step 2: macOS
 
-TODO
+- Had to symlink `arm64` builds of `grpc_csharp_plugin` and `protoc` (sourced from Homebrew's `grpc` and `protoc` packages, respectively) into `~/.nuget/packages/grpc.tools/2.71.0/tools/macosx_x64`
+- Tried various container solutions, including Podman, Colima, Apple's native containers, and Docker, but only Docker worked all the way. Podman and Colima failed miserably trying to run x86-64 `mssql-server` builds. Apple's native containers got close, but aren't really ready yet
+  - I tried Apple's containers with [container-compose](https://github.com/mcrich23/container-compose) and an edit to `sbemulator`'s `docker-compose.yml`'s `Config.json` bind mount, since Apple's `containers` doesn't support single-file mounts at the moment: `"./emulator/config.json:/ServiceBus_Emulator/ConfigFiles/Config.json"` -> `"./emulator:/ServiceBus_Emulator/ConfigFiles"`
+

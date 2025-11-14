@@ -1,0 +1,217 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Script: build
+# Usage:
+#   ./build backend [deploy]   -> Build project and refresh deployment (r to reload, q to quit)
+#	  ./build backend restore  -> Restore the backend project
+#     ./build backend up       -> compose up
+#     ./build backend refresh  -> Refresh the running deployment
+#     ./build backend down     -> compose down
+#   ./build frontend           -> Build and run frontend (r to reload, q to quit)
+
+
+CONTAINERS=podman
+
+# https://dev.to/ifenna__/adding-colors-to-bash-scripts-48g4
+# Cyan
+# COLOR="\e[36m"
+# Blue
+COLOR="\e[34m"
+ENDCOLOR="\e[0m"
+
+function printheader() {
+	local msg
+	local opts=(-e) # always include -e
+
+	if [[ $# -eq 2 ]]; then
+		opts+=("$1") # e.g. -n
+		msg="$2"
+	else
+		msg="$1"
+	fi
+
+	echo "${opts[@]}" "$COLOR==>$ENDCOLOR $msg..."
+}
+
+function backend_build() {
+	printheader "Building project"
+	dotnet build StudentFirstSis.sln -c Debug -p:Platform='Any CPU' --no-restore -m /nr:true -p:UseSharedCompilation=true
+}
+
+function backend_up() {
+	printheader -n "Checking if containers are running"
+	if ! $CONTAINERS ps --format '{{.ID}}' | grep -q .; then
+		echo " No"
+		printheader "Starting containers"
+		$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f ~/.config/docker-compose.vs.debug.g.yml up --detach
+	else
+		echo " Yes"
+	fi
+}
+
+function backend_refresh() {
+	printheader "Starting deployment"
+
+	# Get the directory where this script is located
+	SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+	# Run another script in the same directory
+	"${SCRIPT_DIR}/backend-refresh"
+}
+
+function backend_down() {
+	printheader "Bringing down containers"
+	# Use 0 second timeout so we immediately go to SIGKILL (necessary for containers running dotnet)
+	$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f ~/.config/docker-compose.vs.debug.g.yml down -t 0
+}
+
+function backend_restart_containers() {
+	printheader "Restarting containers"
+	$CONTAINERS compose -f docker-compose.yml -f docker-compose.override.yml -f ~/.config/docker-compose.vs.debug.g.yml restart
+}
+
+function backend_restore() {
+	printheader "Restoring backend"
+	dotnet restore StudentFirstSis.sln -m -p:UseSharedCompilation=true
+}
+
+function backend_deploy() {
+	backend_build
+	backend_up
+	backend_refresh
+}
+
+function backend_restart() {
+	backend_restart_containers
+	backend_refresh
+}
+
+function backend_refreshable() {
+	backend_deploy
+	while true; do
+		read -rsn 1 keypress
+		case "$keypress" in
+		r)
+			# Recompile and update the job running in the containers
+			printheader "Restarting"
+			backend_deploy
+			;;
+		c)
+			# Restart the containers without recompiling anything
+			backend_restart
+			;;
+		q)
+			printheader "Exiting"
+			break
+			;;
+		esac
+	done
+}
+
+
+function backend() {
+	local subcommand="${1:-}"
+
+	case "$subcommand" in
+	"" | deploy)
+		# Shortcut for full deloyment process
+		backend_restore
+		backend_refreshable
+		# Bring it down, now that we're done
+		backend_down
+		;;
+	build)
+		# Standalone compile task
+		backend_build
+		;;
+	refresh)
+		# Refresh the build in the containers
+		backend_up
+		backend_refresh
+		;;
+	up)
+		# Throw up the containers
+		backend_up
+		;;
+	down)
+		# Bring down the containers
+		backend_down
+		;;
+	restore)
+		# Clean the build directory
+		backend_restore
+		;;
+	restart)
+		# Restart containers
+		backend_restart_containers
+		;;
+	clean)
+		# Clean the build directory
+		printheader "Cleaning"
+		dotnet clean StudentFirstSis.sln -c Debug -p:Platform='Any CPU' -m /nr:true -p:UseSharedCompilation=true
+		;;
+	*)
+		echo "Usage: $0 backend [deploy|up|down|refresh|restart|build|clean]"
+		exit 1
+		;;
+	esac
+}
+
+function kill_pid() {
+	local pid=${RUNNING_PID:-}
+	# Kill the frontend background process, if it exists
+	if [[ -n "${pid}" ]] && kill -0 "$pid" 2>/dev/null; then
+		# Kill the whole process group
+		kill -TERM "$pid" 2>/dev/null || true
+		wait "$pid" 2>/dev/null || true
+	fi
+}
+
+function start_frontend() {
+	# Start build in the background
+	dotnet run WebApps.sln --project Web/GlobalEdTech.Sis.WebApp.SPA/GlobalEdTech.Sis.WebApp.SPA.csproj -c Debug -p:Platform=AnyCPU --no-restore -m /nr:true -p:UseSharedCompilation=true &
+	RUNNING_PID="$!"
+}
+
+function frontend_refreshable() {
+	start_frontend
+	while true; do
+		read -rsn 1 keypress
+		case "$keypress" in
+		r)
+			printheader "Restarting"
+			kill_pid
+			start_frontend
+			;;
+		q)
+			printheader "Exiting"
+			kill_pid
+			break
+			;;
+		esac
+	done
+}
+
+# Move to the repo
+cd $HOME/Documents/StudentFirstSIS/src
+
+COMMAND="${1:-}"
+shift
+
+case "$COMMAND" in
+backend)
+	backend "$@"
+	;;
+frontend)
+	printheader "Restoring frontend"
+	dotnet restore WebApps.sln -m -p:UseSharedCompilation=true
+
+	printheader "Starting frontend"
+	frontend_refreshable
+	;;
+*)
+	echo "Usage: $0 [backend|frontend]"
+	exit 1
+	;;
+esac

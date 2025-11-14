@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+COMMAND="${1:-}"
+SEARCH_STRING="${2:-}"
+
+case "$COMMAND" in
+tables)
+    rg --color=always --line-number --no-heading '\[Table\(\s*"(\w+)"\s*,\s*Schema\s*=\s*"(\w+)"' -r '$2.$1' --only-matching | fzf --ansi --query "$SEARCH_STRING"
+    ;;
+pages)
+    rg --color=always --line-number --no-heading '@page\s*"([^\s"]+)"' -r '$1' --only-matching | fzf --ansi --query "$SEARCH_STRING"
+    ;;
+endpoints)
+    rg --color=always --line-number --no-heading '\[Route\s*\(\s*"([^\s"]+)"\s*\)\s*\]' -r '$1' --only-matching | fzf --ansi --query "$SEARCH_STRING"
+    ;;
+*)
+    echo "Usage: $0 <tables|pages|endpoints> [search_string]"
+    exit 1
+    ;;
+esac

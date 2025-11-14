@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+
+import multiprocessing
+import shlex
+import subprocess
+import time
+from typing import NamedTuple
+
+PID_FILE = "/tmp/debuggee.pid"
+CONTAINERS = "podman"
+# CONTAINERS = "docker"
+
+PURPLE = '\033[35m'
+ENDCOLOR = '\033[0m'
+
+class Container(NamedTuple):
+    id: str
+    name: str
+
+
+def get_running_containers() -> list[Container]:
+    result = subprocess.run(
+        [CONTAINERS, "ps", "--format", "{{.ID}}|{{.Names}}"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return [Container(*line.split("|")) for line in result.stdout.strip().splitlines()]
+
+
+def get_label(container: Container, label_name: str) -> str | None:
+    result = subprocess.run(
+        [
+            CONTAINERS,
+            "inspect",
+            "-f",
+            f'{{{{ index .Config.Labels "{label_name}" }}}}',
+            container.id,
+        ],
+        capture_output=True,
+        text=True,
+    )
+    value = result.stdout.strip()
+    if value and not value.startswith("<no value>"):
+        return value
+    return None
+
+
+def kill_previous(container: Container, timeout: int = 5) -> None:
+    print(f"Cleaning up old dotnet process in {container.name}...")
+
+    # Send SIGTERM
+    _ = subprocess.run(
+        [
+            CONTAINERS,
+            "exec",
+            container.id,
+            "sh",
+            "-c",
+            f"if [ -f {PID_FILE} ]; then kill -TERM $(cat {PID_FILE}) 2>/dev/null || true; fi",
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    # Wait for graceful exit
+    exited = False
+    for _ in range(timeout):
+        check = subprocess.run(
+            [
+                CONTAINERS,
+                "exec",
+                container.id,
+                "sh",
+                "-c",
+                f"if [ -f {PID_FILE} ] && kill -0 $(cat {PID_FILE}) 2>/dev/null; then echo alive; fi",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        if not check.stdout.strip():
+            exited = True
+            break
+        time.sleep(1)
+
+    # If still alive, SIGKILL
+    if not exited:
+        print(f"Process still alive in {container.name}, sending SIGKILL...")
+        _ = subprocess.run(
+            [
+                CONTAINERS,
+                "exec",
+                container.id,
+                "sh",
+                "-c",
+                f"if [ -f {PID_FILE} ]; then kill -KILL $(cat {PID_FILE}) 2>/dev/null || true; fi",
+            ],
+            capture_output=True,
+            text=True,
+        )
+
+    # Remove pid file
+    _ = subprocess.run(
+        [CONTAINERS, "exec", container.id, "rm", "-f", PID_FILE],
+        capture_output=True,
+        text=True,
+    )
+
+
+def kill_all_previous(containers: list[Container]) -> None:
+    with multiprocessing.Pool(len(containers)) as p:
+        _ = p.map(kill_previous, containers)
+
+
+def run_dotnet(container: Container):
+    args = get_label(container, "com.microsoft.visualstudio.debuggee.arguments")
+    if not args:
+        return
+    container_cmd = shlex.split(f"'dotnet {args} & echo $! > {PID_FILE}'")
+    cmd = [CONTAINERS, "exec", container.id, "sh", "-c", *container_cmd]
+    print(f"[{PURPLE}{container.name}{ENDCOLOR}]: {' '.join(cmd)}")
+    _ = subprocess.run(cmd)
+
+
+def run_all_dotnet(containers: list[Container]) -> None:
+    with multiprocessing.Pool(len(containers)) as p:
+        _ = p.map(run_dotnet, containers)
+
+
+def main():
+    containers = get_running_containers()
+    kill_all_previous(containers)
+    run_all_dotnet(containers)
+
+
+if __name__ == "__main__":
+    main()

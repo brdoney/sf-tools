@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Move to the repo
+cd $HOME/Documents/StudentFirstSIS/src/Environment/StudentFirst.Infrastructure/
+
+COMMAND="${1:-}"
+shift
+
+case "$COMMAND" in
+migrations)
+    dotnet ef migrations "$@"
+	;;
+update)
+    dotnet ef database update "$@"
+	;;
+*)
+	echo "Usage: $0 [migrations|update]"
+	exit 1
+	;;
+esac

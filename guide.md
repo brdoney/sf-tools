@@ -61,7 +61,7 @@ sudo apt install dotnet-sdk-9.0 dotnet-sdk-8.0
 
 Check the install guide for your OS, then look at the [setup](#database-setup)
 
-#### SQL Server
+#### Windows
 
 Just use the instructions already in our Wiki. Nice and simple.
 

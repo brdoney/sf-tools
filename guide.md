@@ -31,6 +31,28 @@ As a side note, the frontend is just a regular, non-containerized (native) C# pr
 
 ## Setup
 
+### .NET SDK
+
+Of course, you'll need `dotnet` to compile and run C#. The only tricky thing is that you'll need to install .NET SDK 9 or above for *much* better CLI output formatting and build times, but SDK 8 for compatibility with some tools like [SqlPackage](https://learn.microsoft.com/en-us/sql/tools/sqlpackage/sqlpackage?view=sql-server-ver17).
+
+#### macOS
+
+Just use [Homebrew](https://brew.sh/) and a [tap for installing multiple .NET SDK versions simultaneously](https://github.com/isen-ng/homebrew-dotnet-sdk-versions):
+
+```bash
+brew install --cask dotnet-sdk
+brew tap isen-ng/dotnet-sdk-versions
+brew install --cask dotnet-sdk8
+```
+
+#### Linux
+
+Use your package manager. For example, on Ubuntu:
+
+```bash
+sudo apt install dotnet-sdk-9.0 dotnet-sdk-8.0
+```
+
 ### SQL Server (Database)
 
 Check the install guide for your OS, then look at the [setup](#database-setup)
@@ -59,31 +81,43 @@ docker run -d --name sfmssql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=<password>' -p 1
 
 #### Database Setup
 
-Now the whole team is back together 👏. You can import the databases from a bacpac backup:
+Now the whole team is back together 👋. First, [install the `sqlpackage` CLI](https://learn.microsoft.com/en-us/sql/tools/sqlpackage/sqlpackage-download?view=sql-server-ver17) (for easily importing from bacpac files) and [the `dotnet-ef` CLI](https://learn.microsoft.com/en-us/ef/core/cli/dotnet) (for managing EF/database tables):
+
+```bash
+dotnet tool install -g microsoft.sqlpackage
+dotnet tool install -g dotnet.ef
+```
+
+Now, you can import the databases from a bacpac backup (get them from someone else). Swap out the file names in the `/sf` parameter as appropriate depending on where yours are located/what they're named:
 
 ```bash
 sqlpackage /a:Import /tsn:tcp:localhost,1433 /tdn:globaledtech.Sis.Tenants.API_db /tu:sa /tp:Pass@word /sf:globaledtech.Sis.Tenants.API_db.bacpac /TargetEncryptConnection:False
 sqlpackage /a:Import /tsn:tcp:localhost,1433 /tdn:QA2.Sis.Common.API_db /tu:sa /tp:Pass@word /sf:QA2.Sis.Common.API_db.bacpac /TargetEncryptConnection:False
 ```
 
-And create a user (using a query via some SQL Server client like a VSCode extension or via [Miscoroft's go-sqlcmd](https://github.com/microsoft/go-sqlcmd) using the `sa` account and password set earlier):
+And create a user with sysadmin privileges (using a query via some SQL Server client like a VSCode extension or via [Miscoroft's go-sqlcmd](https://github.com/microsoft/go-sqlcmd) using the `sa` account and password set earlier):
 
 ```sql
 CREATE LOGIN dbadmin
 WITH PASSWORD = 'Pass@word', CHECK_POLICY = OFF;
-```
-
-Grant the user sysadmin privileges:
-
-```sql
 EXEC sp_addsrvrolemember 'dbadmin', 'sysadmin';
 ```
+
+Finally, [run this query from our Wiki](https://dev.azure.com/silverleafsystems/School%20Tools/_wiki/wikis/School-Tools.wiki/6/Setting-Up-Your-Environment?anchor=configuring-the-database).
+
+That's it! You should be able to connect to the server using whatever client you want and our backend's `azure-sql-edge` container should pick up on it for use in production so you can use it for manual querying and for development.
 
 In case you ever need to export, it's basically the same as the `sqlpackage` import command but with the source and target arguments flipped (obviously change the target file name to whatever you want):
 
 ```bash
 sqlpackage /a:Export /ssn:tcp:localhost,1433 /sdn:QA2.Sis.Common.API_db /su:sa /sp:Pass@word /tf:QA20251016.bacpac /TargetEncryptConnection:False
 ```
+
+### Clone the Repository
+
+Just use `git clone` with SSH keys. See [this guide for settings up SSH keys in DevOps](https://learn.microsoft.com/en-us/azure/devops/repos/git/use-ssh-keys-to-authenticate?view=azure-devops). 
+
+I put the repo in `~/Documents`, but it doesn't really matter. The great thing is that if you're not using Windows, you shouldn't need to worry about path length limits, so it can go anywhere (instead of just `C:\` like our Wiki suggest).
 
 ### ASP.NET Certificates
 
@@ -113,7 +147,13 @@ dotnet dev-certs https -ep ~/.aspnet/https/globaledtech-SystemConfiguration-api.
 dotnet dev-certs https --trust
 ```
 
-### Scripts to Edit
+### Frontend
+
+Make sure to install the user configurations for the frontend!!! This is a headache to debug if you forget to do it (speaking from experience 😅).
+
+There's already a [guide in the Wiki for this](https://dev.azure.com/silverleafsystems/School%20Tools/_wiki/wikis/School-Tools.wiki/6/Setting-Up-Your-Environment?anchor=launch-user-configuration). Not sure if it matters, but I change the `AlgDevApiUser` field to match your email.
+
+### Helper Scripts
 
 I publish all of the scripts I use in a [GitHub repository](https://github.com/brdoney/sf-tools). Feel free to download it and even pitch in a PR if you add something! I definitely haven't tested every OS and edge case.
 
@@ -177,7 +217,9 @@ build backend
 build frontend
 ```
 
-If I ever need to see what's going on with a backend service I use VSCode's container extension or [lazydocker](https://github.com/jesseduffield/lazydocker), which can also use podman via `DOCKER_HOST=unix:///run/user/1000/podman/podman.sock ~/Documents/lazydocker/lazydocker` (I have this set to an alias).
+The relevant ports for the frontend and backend are all [listed in our Wiki already](https://dev.azure.com/silverleafsystems/School%20Tools/_wiki/wikis/School-Tools.wiki/6/Setting-Up-Your-Environment?anchor=services-in-solution).
+
+If I ever need to see what's going on with a backend service I use VSCode's container extension or [lazydocker](https://github.com/jesseduffield/lazydocker), which can also use `podman` via `DOCKER_HOST=unix:///run/user/1000/podman/podman.sock ~/Documents/lazydocker/lazydocker` (I have this set to an alias).
 
 ## Additional OS-Specific Notes
 

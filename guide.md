@@ -215,6 +215,9 @@ fix-staticwebassets
 build backend
 ```
 
+> [! NOTE]
+> Because starting containers is *so much faster* on Linux (like 1-2 seconds vs. 30+ seconds elsewhere), **sometimes the API containers finish startup before `sbemulator` does** on first startup via `build backend`, resulting in a broken state. You can identify this by looking at the logs for any of the API containers. If this happens, just hit `r` to recompile and restart or `c` to just restart the `dotnet` processes in the API containers without recompiling. From there, the issue shouldn't reoccur unless you quit and start a new `build backend` instance.
+
 3. Start the frontend. Same as the backend: `r` recompiles and restarts, `q` quits.
 
 ```bash
@@ -223,7 +226,7 @@ build frontend
 
 The relevant ports for the frontend and backend are all [listed in our Wiki already](https://dev.azure.com/silverleafsystems/School%20Tools/_wiki/wikis/School-Tools.wiki/6/Setting-Up-Your-Environment?anchor=services-in-solution).
 
-If I ever need to see what's going on with a backend service I use VSCode's container extension or [lazydocker](https://github.com/jesseduffield/lazydocker), which can also use `podman` via `DOCKER_HOST=unix:///run/user/1000/podman/podman.sock ~/Documents/lazydocker/lazydocker` (I have this set to an alias).
+If I ever need to see what's going on with a backend service I use VSCode's container extension or [lazydocker](https://github.com/jesseduffield/lazydocker), which can also use `podman` via `DOCKER_HOST=unix:///run/user/1000/podman/podman.sock ~/Documents/lazydocker/lazydocker` (I have this set to an alias). These tools (particularly the logs) are *really* helpful for debugging any issues with this setup.
 
 ## Additional OS-Specific Notes
 

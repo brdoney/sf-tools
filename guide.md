@@ -1,4 +1,8 @@
-# Sans Visual Studio
+# Setting Up Your Environment Without Visual Studio
+
+If you want to run our application *without* Visual Studio, things are a bit more complicated to set up. But it's so worth it! For my macOS and Linux systems, **recompiling and refreshing the backend takes 2-3 seconds instead of 60+ seconds through Visual Studio**. You can also use whatever you want alongside this approach (even Visual Studio, if you just want the compile+refresh speedup).
+
+I (Brendan) have done most of the work and debugging to figure this all out, which I've documented below. Take a look and let me know if you have any issues or questions!
 
 ## Background
 
